@@ -12,7 +12,7 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min; //Максимум не включается, минимум включается
 }
 
-console.log(getRandomInt(0, 9));
+getRandomInt(0, 9);
 
 
 function getLengthComment(line, length) {
@@ -21,4 +21,4 @@ function getLengthComment(line, length) {
   return lengthComment;
 }
 
-console.log(getLengthComment(5, 4));
+getLengthComment(5, 10);
