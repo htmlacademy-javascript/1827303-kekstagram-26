@@ -1,6 +1,10 @@
 function getRandomInt(min, max) {
   if (max <= min) {
-    return console.log('Измените значение max. Оно должно быть больше значения min');
+    throw new Error('Измените значение max. Оно должно быть больше значения min');
+  }
+
+  if (max < 0, min < 0) {
+    throw new Error('Значение min и max должно быть не отрицательным');
   }
 
   min = Math.ceil(min);
@@ -13,11 +17,8 @@ console.log(getRandomInt(0, 9));
 
 function getLengthComment(line, length) {
   const lineLength = line.length;
-  if (lineLength> length) {
-    return false;
-  } else {
-    return true;
-  }
+  const lengthComment = (lineLength> length) ? false : true;
+  return lengthComment;
 }
 
-console.log(getLengthComment(5, 10));
+console.log(getLengthComment(5, 4));
