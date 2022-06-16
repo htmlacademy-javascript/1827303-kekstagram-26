@@ -25,7 +25,6 @@ const MESSAGE = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
 
-
 function getRandomPositiveInteger (a, b) {
   const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
   const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
@@ -41,21 +40,67 @@ function getRandomArrayElement (elements) {
   return elements[getRandomPositiveInteger(0, elements.length - 1)];
 }
 
-const createData = function () {
+function createComment (index) {
   return {
-    id: getRandomPositiveInteger (1, 25),
-    url: `photos/${getRandomPositiveInteger (1, 25)}.jpg`,
+    id: index + 1,
+    avatar: `img/avatar-${getRandomPositiveInteger(1, 6)}.svg`,
+    message: getRandomArrayElement(MESSAGE),
+    name: getRandomArrayElement(NAME),
+  };
+}
+
+const createData = function (index) {
+  return {
+    id: index + 1,
+    url: `photos/${index + 1}.jpg`,
     description: getRandomArrayElement(DESCRIPTIONS),
     likes: getRandomPositiveInteger (15, 200),
-    comments: [`id: ${getRandomPositiveInteger (0, 200)}`,
-      `avatar: img/avatar-${getRandomPositiveInteger(1, 6)}.svg`,
-      `message: ${getRandomArrayElement(MESSAGE)}`,
-      `name: ${getRandomArrayElement(NAME)}`],
+    comments: Array.from({length: getRandomPositiveInteger(1, 10)}, (_, index) => createComment(index)),
   };
 };
 
-const simylarData = Array.from({length: 25}, createData);
+const simylarData = Array.from({length: 25}, (_, index) => createData(index));
 
 // console.log(simylarData);
 
 
+// Случайный массив
+
+// let array = [];
+
+// const count = 25;
+
+// function getRandomArray (count) {
+
+//   while (array.length < count) {
+//     // «дополнять массив уникальными числами»
+
+//     let result = Math.floor(Math.random() * (count + 1));
+
+//     if (!array.includes(result)) {
+//       array.push(result);
+//     }
+//   }
+
+//   return array;
+// };
+
+// console.log(getRandomArray(count));
+
+// // Элемент из массива
+
+// function getElementOfArray () {
+//   for (let i = 0; i < 25; i++) {
+//     let number = 0;
+//     let elementArray = array[number];
+
+//     number = number + 1;
+//     return elementArray;
+//   }
+// }
+
+// console.log(getElementOfArray());
+
+// const simylarElement = Array.from({length: 25}, getElementOfArray);
+
+// console.log(simylarElement);
