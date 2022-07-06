@@ -1,38 +1,68 @@
-import {simylarData} from './data.js';
-
 const modalWindow = document.querySelector('.big-picture');
-const tegBody = document.querySelector('body');
+const commentCount = document.querySelector('.comments-count');
+const bigPhoto = document.querySelector('.big-picture__img img');
+const likesCount = document.querySelector('.likes-count');
 const commentDescription = document.querySelector('.social__caption');
-
-const buttonClose = document.querySelector('#picture-cancel');
-buttonClose.addEventListener('click', () => {
-  modalWindow.classList.add('hidden');
-  tegBody.classList.remove('modal-open');
-});
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    modalWindow.classList.add('hidden');
-  }
-});
-
-const commentList = document.querySelector('.social__comments');
+const commentListItem = document.querySelector('.social__comments');
 const tempalteCommentItem = document.querySelector('#comment-item')
   .content
   .querySelector('.social__comment');
 
-const simylarNewComment = simylarData();
 
-const addCommentList = document.createDocumentFragment();
+const likesCounter = document.querySelector('.social__comment-count');
+likesCounter.classList.add('hidden');
 
-simylarNewComment.forEach(({comments, description}) => {
-  const simylarComment = tempalteCommentItem.cloneNode(true);
-  simylarComment.querySelector('.social__picture').src = comments.avatar;
-  simylarComment.querySelector('.social__picture').alt = comments.name;
-  simylarComment.querySelector('.social__text').textContent = comments.message;
+const uploadComment = document.querySelector('.comments-loader');
+uploadComment.classList.add('hidden');
+
+
+// Открывает модальное окно
+function openModalWindow(url, likes, comments, description) {
+  document.body.classList.add('modal-open');
+  modalWindow.classList.remove('hidden');
+
+  bigPhoto.src = url;
+  commentCount.textContent = comments.length;
+  likesCount.textContent = likes;
   commentDescription.textContent = description;
+  commentListItem.innerHTML = '';
+  comments.forEach(createComment);
+}
 
-  addCommentList.appendChild(simylarComment);
-});
+// Добавляет комментарии
+function createComment({ avatar, name, message }) {
+  const similarComment = tempalteCommentItem.cloneNode(true);
 
-commentList.appendChild(addCommentList);
+  similarComment.querySelector('.social__picture').src = avatar;
+  similarComment.querySelector('.social__picture').alt = name;
+  similarComment.querySelector('.social__text').textContent = message;
+
+  commentListItem.appendChild(similarComment);
+}
+
+// Закрывает модальное окно
+function closeModalWindow() {
+  const buttonClose = document.querySelector('#picture-cancel');
+  buttonClose.addEventListener('click', () => {
+    modalWindow.classList.add('hidden');
+    const tegBody = document.querySelector('body');
+    tegBody.classList.remove('modal-open');
+  });
+
+  function clickHandlerByEsc(e) {
+    if (e.key === 'Escape') {
+      modalWindow.classList.add('hidden');
+    }
+  }
+
+  if (modalWindow.classList.contains('hidden') === true) {
+    document.removeEventListener('keydown', clickHandlerByEsc);
+  }
+
+  document.addEventListener('keydown', clickHandlerByEsc);
+}
+
+closeModalWindow();
+
+export { openModalWindow };
+

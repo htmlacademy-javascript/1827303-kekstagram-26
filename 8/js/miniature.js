@@ -1,31 +1,16 @@
 import {simylarData} from './data.js';
+import {openModalWindow} from './big-photo.js';
 
 const simylarListElement = document.querySelector('.pictures');
 const simylarPhotoTempalate = document.querySelector('#picture')
   .content
   .querySelector('.picture');
 
-const modalWindow = document.querySelector('.big-picture');
-const bigPhoto = document.querySelector('.big-picture__img');
-const commentCount = document.querySelector('.comments-count');
-const likesCount = document.querySelector('.likes-count');
-
-function openModalWindow () {
-  const likesCounter = document.querySelector('.social__comment-count');
-  likesCounter.classList.add('hidden');
-
-  const uploadComment = document.querySelector('.comments-loader');
-  uploadComment.classList.add('hidden');
-
-  const tegBody = document.querySelector('body');
-  tegBody.classList.add('modal-open');
-}
-
-const simylarPhoto = simylarData();
+const similarPhoto = simylarData();
 
 const miniatureList = document.createDocumentFragment();
 
-simylarPhoto.forEach(({url, likes, comments}) => {
+function createSimilarPhoto ({url, likes, comments, description}) {
   const simylarElement = simylarPhotoTempalate.cloneNode(true);
   simylarElement.querySelector('.picture__img').src = url;
   simylarElement.querySelector('.picture__likes').textContent = likes;
@@ -33,15 +18,12 @@ simylarPhoto.forEach(({url, likes, comments}) => {
 
   simylarElement.addEventListener('click', (evt) => {
     evt.preventDefault();
-
-    modalWindow.classList.remove('hidden');
-    bigPhoto.children[0].src = url;
-    commentCount.textContent = comments.length;
-    likesCount.textContent = likes;
-    openModalWindow();
+    openModalWindow(url, likes, comments, description);
   });
 
   miniatureList.appendChild(simylarElement);
-});
+}
+
+similarPhoto.forEach(createSimilarPhoto);
 
 simylarListElement.appendChild(miniatureList);
