@@ -1,6 +1,6 @@
 // Показывает окно загрузки фото
-const form = document.querySelector('.img-upload__overlay');
-form.classList.remove('hidden');
+const form = document.querySelector('.img-upload__form');
+// form.classList.remove('hidden');
 
 const uploadPhotoImg = document.querySelector('.img-upload__preview img');
 const uploadPhoto = document.querySelector('#upload-file');
@@ -59,39 +59,25 @@ let scaleValueNumber = parseInt(inputScale.value, 10);
 const scaleContolStep = 25;
 
 function changeScaleValue() {
-  if (scaleValueNumber === 100) {
-    buttonScaleBigger.disabled = true;
-  }
-
   buttonScaleSmaller.addEventListener('click', () => {
+    if (scaleValueNumber === 25) {
+      return;
+    }
+
     scaleValueNumber = scaleValueNumber - scaleContolStep;
     inputScale.value = `${scaleValueNumber}%`;
-
-    // Проверка соответсвия условию от 25% до 100%
-    if (scaleValueNumber === 25) {
-      buttonScaleSmaller.disabled = true;
-    }
-
-    if (scaleValueNumber < 100) {
-      buttonScaleBigger.disabled = false;
-    }
 
     uploadPhotoImg.style.transform = `scale(${scaleValueNumber / 100})`;
     return inputScale.value;
   });
 
   buttonScaleBigger.addEventListener('click', () => {
+    if (scaleValueNumber === 100) {
+      return;
+    }
+
     scaleValueNumber = scaleValueNumber + scaleContolStep;
     inputScale.value = `${scaleValueNumber}%`;
-
-    // Проверка соответсвия условию от 25% до 100%
-    if (scaleValueNumber === 100) {
-      buttonScaleBigger.disabled = true;
-    }
-
-    if (scaleValueNumber > 25) {
-      buttonScaleSmaller.disabled = false;
-    }
 
     uploadPhotoImg.style.transform = `scale(${scaleValueNumber / 100})`;
     return inputScale.value;
@@ -104,7 +90,7 @@ changeScaleValue();
 // Добавляет эффект на фото
 const rangeSlider = document.querySelector('.effect-level');
 
-let currentEffect;
+// let currentEffect;
 
 function createEffect() {
   const effectControlItem = document.querySelectorAll('.effects__radio');
@@ -149,12 +135,10 @@ function createEffect() {
 
         // currentEffect = (values) => `grayscale(${values})`;
 
-        // rangeSlider.noUiSlider.on('update', (values) => {
-        //   let valueSlider = `grayscale(${values})`;
-        //   console.log(valueSlider);
-        //   console.log(values);
-        //   uploadPhotoImg.style.filter = valueSlider;
-        // });
+        rangeSlider.noUiSlider.on('update', (values) => {
+          let valueSlider = `grayscale(${values})`;
+          uploadPhotoImg.style.filter = valueSlider;
+        });
       }
 
       if (cssEffectByPhoto === 'effects__preview--sepia') {
@@ -217,21 +201,12 @@ function createEffect() {
 createEffect();
 
 // Проверка формы с помощью Pristine
-// const inputHashtag = form.querySelector('.text__hashtags');
-
-// Хэштег
-const HASHTAG_REGEX = /^#(?=.*[^0-9])[a-zа-яё0-9]{1,20}$/;
+const HASHTAG_REGEX =/^#[A-Za-zА-Яа-яЁё0-9]{1,20}$/;
 
 function emailTest(value) {
   const hashtags = value.split(' ');
 
   return hashtags.every((hashtag) => HASHTAG_REGEX.test(hashtag));
-}
-
-function validateHashtagMinLength(value) {
-  const hashtags = value.split(' ');
-
-  return hashtags.length >= 1;
 }
 
 function validateHashtagMaxLength(value) {
@@ -244,7 +219,7 @@ function validateHashtagIsUnique(value) {
   const hashtags = value.split(' ');
   const hashtagSet = new Set(hashtags);
 
-  return hashtags.length == hashtagSet.size;
+  return hashtags.length === hashtagSet.size;
 }
 
 // Кэмел кэйс
@@ -259,16 +234,20 @@ function validateCommentMaxLength(value) {
 
 const pristine = new Pristine(form);
 
+// Поле хэштега
 pristine.addValidator(inputHashtag, emailTest);
-pristine.addValidator(inputHashtag, validateHashtagMinLength);
 pristine.addValidator(inputHashtag, validateHashtagMaxLength);
 pristine.addValidator(inputHashtag, validateHashtagIsUnique);
 
+// Поле комментария
 pristine.addValidator(inputComment, validateCommentMaxLength);
 
 form.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  pristine.validate();
+  const valid = pristine.validate();
+
+  if (!valid) {
+    evt.preventDefault();
+  }
 });
 
 
