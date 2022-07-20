@@ -1,6 +1,6 @@
 // Показывает окно загрузки фото
+const formOverlay = document.querySelector('.img-upload__overlay');
 const form = document.querySelector('.img-upload__form');
-// form.classList.remove('hidden');
 
 const uploadPhotoImg = document.querySelector('.img-upload__preview img');
 const uploadPhoto = document.querySelector('#upload-file');
@@ -8,10 +8,10 @@ const uploadPhoto = document.querySelector('#upload-file');
 function openUploadPhoto() {
   uploadPhoto.addEventListener('change', () => {
     document.body.classList.add('modal-open');
-    form.classList.remove('hidden');
+    formOverlay.classList.remove('hidden');
 
-    let selectedFile = uploadPhoto.files[0];
-    let fileUrl = URL.createObjectURL(selectedFile);
+    const selectedFile = uploadPhoto.files[0];
+    const fileUrl = URL.createObjectURL(selectedFile);
 
     uploadPhotoImg.src = fileUrl;
   });
@@ -27,7 +27,7 @@ const inputComment = document.querySelector('.text__description');
 function closenUploadPhoto() {
   buttonCloseUpload.addEventListener('click', () => {
     document.body.classList.remove('modal-open');
-    form.classList.add('hidden');
+    formOverlay.classList.add('hidden');
   });
 
   uploadPhoto.value = '';
@@ -38,11 +38,11 @@ function closenUploadPhoto() {
         return;
       }
 
-      form.classList.add('hidden');
+      formOverlay.classList.add('hidden');
     }
   }
 
-  if (form.classList.contains('hidden') === true) {
+  if (formOverlay.classList.contains('hidden') === true) {
     document.removeEventListener('keydown', clickHandlerUploadByEsc);
   }
 
@@ -88,109 +88,109 @@ function changeScaleValue() {
 changeScaleValue();
 
 // Добавляет эффект на фото
-const rangeSlider = document.querySelector('.effect-level');
+// const rangeSlider = document.querySelector('.effect-level');
 
 // let currentEffect;
 
-function createEffect() {
-  const effectControlItem = document.querySelectorAll('.effects__radio');
-  for (let i = 0; i < effectControlItem.length; i++) {
-    effectControlItem[i].addEventListener('click', () => {
-      uploadPhotoImg.className = '';
-      const cssEffectByPhoto = `effects__preview--${effectControlItem[i].value}`;
-      uploadPhotoImg.classList.add(cssEffectByPhoto);
+// function createEffect() {
+//   const effectControlItem = document.querySelectorAll('.effects__radio');
+//   for (let i = 0; i < effectControlItem.length; i++) {
+//     effectControlItem[i].addEventListener('click', () => {
+//       uploadPhotoImg.className = '';
+//       const cssEffectByPhoto = `effects__preview--${effectControlItem[i].value}`;
+//       uploadPhotoImg.classList.add(cssEffectByPhoto);
 
-      if (cssEffectByPhoto === 'effects__preview--none') {
-        uploadPhotoImg.className = '';
-      }
+//       if (cssEffectByPhoto === 'effects__preview--none') {
+//         uploadPhotoImg.className = '';
+//       }
 
-      const settingOfRangeTen = {
-        start: [1],
-        connect: 'lower',
-        step: 0.1,
-        range: {
-          'min': 0,
-          'max': 1
-        }
-      };
+//       const settingOfRangeTen = {
+//         start: [1],
+//         connect: 'lower',
+//         step: 0.1,
+//         range: {
+//           'min': 0,
+//           'max': 1
+//         }
+//       };
 
-      const settingOfRangethirty = {
-        start: [3],
-        connect: 'lower',
-        step: 0.1,
-        range: {
-          'min': 0,
-          'max': 3
-        }
-      };
+//       const settingOfRangethirty = {
+//         start: [3],
+//         connect: 'lower',
+//         step: 0.1,
+//         range: {
+//           'min': 0,
+//           'max': 3
+//         }
+//       };
 
-      if (cssEffectByPhoto === 'effects__preview--chrome') {
-        // rangeSlider.noUiSlider.off();
+//       if (cssEffectByPhoto === 'effects__preview--chrome') {
+//         // rangeSlider.noUiSlider.off();
 
-        noUiSlider.create(rangeSlider, settingOfRangeTen);
-
-
-//  ДОДЕЛАТЬ
+//         noUiSlider.create(rangeSlider, settingOfRangeTen);
 
 
-        // currentEffect = (values) => `grayscale(${values})`;
+// //  ДОДЕЛАТЬ
 
-        rangeSlider.noUiSlider.on('update', (values) => {
-          let valueSlider = `grayscale(${values})`;
-          uploadPhotoImg.style.filter = valueSlider;
-        });
-      }
 
-      if (cssEffectByPhoto === 'effects__preview--sepia') {
-        noUiSlider.create(rangeSlider, settingOfRangeTen);
+//         // currentEffect = (values) => `grayscale(${values})`;
 
-        rangeSlider.noUiSlider.on('update', (values) => {
-          let valueSlider = `sepia(${values})`;
-          console.log(valueSlider);
-          uploadPhotoImg.style.filter = valueSlider;
-        });
-      }
+//         rangeSlider.noUiSlider.on('update', (values) => {
+//           let valueSlider = `grayscale(${values})`;
+//           uploadPhotoImg.style.filter = valueSlider;
+//         });
+//       }
 
-      if (cssEffectByPhoto === 'effects__preview--marvin') {
-        noUiSlider.create(rangeSlider, {
-          start: [100],
-          connect: 'lower',
-          step: 1,
-          range: {
-            'min': 0,
-            'max': 100
-          }
-        });
+//       if (cssEffectByPhoto === 'effects__preview--sepia') {
+//         noUiSlider.create(rangeSlider, settingOfRangeTen);
 
-        rangeSlider.noUiSlider.on('update', (values) => {
-          let valueSlider = `invert(${values})`;
-          console.log(valueSlider);
-          uploadPhotoImg.style.filter = valueSlider;
-        });
-      }
+//         rangeSlider.noUiSlider.on('update', (values) => {
+//           let valueSlider = `sepia(${values})`;
+//           console.log(valueSlider);
+//           uploadPhotoImg.style.filter = valueSlider;
+//         });
+//       }
 
-      if (cssEffectByPhoto === 'effects__preview--phobos') {
-        noUiSlider.create(rangeSlider, settingOfRangethirty);
+//       if (cssEffectByPhoto === 'effects__preview--marvin') {
+//         noUiSlider.create(rangeSlider, {
+//           start: [100],
+//           connect: 'lower',
+//           step: 1,
+//           range: {
+//             'min': 0,
+//             'max': 100
+//           }
+//         });
 
-        rangeSlider.noUiSlider.on('update', (values) => {
-          let valueSlider = `blur(${values})`;
-          console.log(valueSlider);
-          uploadPhotoImg.style.filter = valueSlider;
-        });
-      }
+//         rangeSlider.noUiSlider.on('update', (values) => {
+//           let valueSlider = `invert(${values})`;
+//           console.log(valueSlider);
+//           uploadPhotoImg.style.filter = valueSlider;
+//         });
+//       }
 
-      if (cssEffectByPhoto === 'effects__preview--heat') {
-        noUiSlider.create(rangeSlider, settingOfRangethirty);
+//       if (cssEffectByPhoto === 'effects__preview--phobos') {
+//         noUiSlider.create(rangeSlider, settingOfRangethirty);
 
-        rangeSlider.noUiSlider.on('update', (values) => {
-          let valueSlider = `brightness(${values})`;
-          console.log(valueSlider);
-          uploadPhotoImg.style.filter = valueSlider;
-        });
-      }
-    });
-  }
-}
+//         rangeSlider.noUiSlider.on('update', (values) => {
+//           let valueSlider = `blur(${values})`;
+//           console.log(valueSlider);
+//           uploadPhotoImg.style.filter = valueSlider;
+//         });
+//       }
+
+//       if (cssEffectByPhoto === 'effects__preview--heat') {
+//         noUiSlider.create(rangeSlider, settingOfRangethirty);
+
+//         rangeSlider.noUiSlider.on('update', (values) => {
+//           let valueSlider = `brightness(${values})`;
+//           console.log(valueSlider);
+//           uploadPhotoImg.style.filter = valueSlider;
+//         });
+//       }
+//     });
+//   }
+// }
 
 // function getFilter () {
 //   rangeSlider.noUiSlider.on('update', () => {
@@ -198,7 +198,7 @@ function createEffect() {
 //   });
 // }
 
-createEffect();
+// createEffect();
 
 // Проверка формы с помощью Pristine
 const HASHTAG_REGEX =/^#[A-Za-zА-Яа-яЁё0-9]{1,20}$/;
