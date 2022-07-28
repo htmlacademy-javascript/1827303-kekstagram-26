@@ -38,7 +38,6 @@ function createEffect() {
 
         rangeSlider.noUiSlider.off();
         uploadPhotoImg.style.filter = '';
-
       }
 
       if (cssEffectByPhoto === 'effects__preview--chrome') {

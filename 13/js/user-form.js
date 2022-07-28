@@ -8,6 +8,7 @@ function openUploadPhoto() {
   uploadPhoto.addEventListener('change', () => {
     document.body.classList.add('modal-open');
     formOverlay.classList.remove('hidden');
+    document.addEventListener('keydown', clickHandlerUploadByEsc);
 
     const selectedFile = uploadPhoto.files[0];
     const fileUrl = URL.createObjectURL(selectedFile);
@@ -23,62 +24,26 @@ const buttonCloseUpload = document.querySelector('#upload-cancel');
 const inputHashtag = form.querySelector('.text__hashtags');
 const inputComment = document.querySelector('.text__description');
 
-function closenUploadPhoto() {
-  buttonCloseUpload.addEventListener('click', () => {
-    document.body.classList.remove('modal-open');
-    formOverlay.classList.add('hidden');
-  });
-
+function closeUploadPhoto() {
   uploadPhoto.value = '';
-
-  function clickHandlerUploadByEsc(e) {
-    if (e.key === 'Escape') {
-      if (document.activeElement === inputHashtag || document.activeElement === inputComment) {
-        return;
-      }
-
-      formOverlay.classList.add('hidden');
-    }
-  }
-
-  if (formOverlay.classList.contains('hidden') === true) {
-    document.removeEventListener('keydown', clickHandlerUploadByEsc);
-  }
-
-  document.addEventListener('keydown', clickHandlerUploadByEsc);
+  document.body.classList.remove('modal-open');
+  formOverlay.classList.add('hidden');
+  document.removeEventListener('keydown', clickHandlerUploadByEsc);
 }
 
-closenUploadPhoto();
+buttonCloseUpload.addEventListener('click', () => {
+  closeUploadPhoto();
+});
 
-// Добавляет эффект на фото
-// const rangeSlider = document.querySelector('.effect-level');
+function clickHandlerUploadByEsc(e) {
+  if (e.key === 'Escape') {
+    if (document.activeElement === inputHashtag || document.activeElement === inputComment) {
+      return;
+    }
 
-// Делегирование
-// function createEffect() {
-//   form.addEventListener('change', (evt) => {
-//     if (evt.target.name === 'effect') {
-//       const { value } = evt.target;
-
-//       console.log(evt.target);
-//       console.log(value);
-//       const cssEffectByPhoto = `effects__preview--${value}`;
-//       console.log(cssEffectByPhoto);
-
-//       switch (value) {
-//         case 'chrome':
-//           evt.target.classList.add(cssEffectByPhoto);
-//           // логика для chrome
-//           break;
-//         case 'sepia':
-//           // логика для sepia
-//           break;
-//       }
-
-//     }
-//   });
-// }
-
-// createEffect();
+    closeUploadPhoto();
+  }
+}
 
 // Проверка формы с помощью Pristine
 const HASHTAG_REGEX = /^#[A-Za-zА-Яа-яЁё0-9]{1,20}$/;
@@ -122,10 +87,152 @@ pristine.addValidator(inputHashtag, validateHashtagIsUnique);
 // Валидаторы поля комментария
 pristine.addValidator(inputComment, validateCommentMaxLength);
 
-form.addEventListener('submit', (evt) => {
-  const valid = pristine.validate();
+// const submitButton = document.querySelector('.img-upload__submit');
 
-  if (!valid) {
-    evt.preventDefault();
+// const blockSubmitButton = () => {
+//   submitButton.disabled = true;
+//   submitButton.textContent = 'Сохраняю...';
+// };
+
+// const unblockSubmitButton = () => {
+//   submitButton.disabled = false;
+//   submitButton.textContent = 'Сохранить';
+// };
+
+// Сообщение об успехе
+const inputScale = document.querySelector('.scale__control--value');
+const tempalteSuccessMessage = document.querySelector('#success')
+  .content
+  .querySelector('.success');
+
+function resetSettings() {
+  inputScale.value = '100%';
+  uploadPhotoImg.classList.remove();
+  uploadPhotoImg.style.filter = '';
+  inputHashtag.value = '';
+  inputComment.value = '';
+  uploadPhoto.value = '';
+}
+
+function getSuccessMessage() {
+  resetSettings();
+  formOverlay.classList.add('hidden');
+
+  const successMessage = tempalteSuccessMessage.cloneNode(true);
+  document.body.append(successMessage);
+  document.addEventListener('keydown', clickHandlerByEsc);
+  document.addEventListener('click', onOutsideErrorMessageClick);
+
+  const sectionSuccessElement = document.querySelector('.success');
+  sectionSuccessElement.classList.remove('hidden');
+
+  const onSuccessButton = document.querySelector('.success__button');
+  onSuccessButton.addEventListener('click', () => {
+    closeSuccessMessage();
+  });
+
+  function closeSuccessMessage() {
+    sectionSuccessElement.classList.add('hidden');
+    successMessage.remove();
+    document.removeEventListener('keydown', clickHandlerByEsc);
+    document.removeEventListener('click', onOutsideErrorMessageClick);
   }
-});
+
+  function clickHandlerByEsc(e) {
+    if (e.key === 'Escape') {
+      closeSuccessMessage();
+    }
+  }
+
+  function onOutsideErrorMessageClick(e) {
+    const target = e.target;
+    if (!target.closest('.success__inner')) {
+      closeSuccessMessage();
+    }
+  }
+}
+
+// Сообщение об ошибке
+const tempalteErrorMessage = document.querySelector('#error')
+  .content
+  .querySelector('.error');
+
+function getErrorMessage() {
+  const errorMessage = tempalteErrorMessage.cloneNode(true);
+  document.body.append(errorMessage);
+  document.addEventListener('keydown', clickHandlerByEsc);
+  document.addEventListener('click', onOutsideErrorMessageClick);
+
+  const sectionErrorElement = document.querySelector('.error');
+  sectionErrorElement.classList.remove('hidden');
+  formOverlay.classList.add('hidden');
+
+  const onErrorButton = document.querySelector('.error__button');
+  onErrorButton.addEventListener('click', () => {
+    closeErrorMessage();
+  });
+
+  function closeErrorMessage() {
+    formOverlay.classList.remove('hidden');
+    errorMessage.remove();
+    document.removeEventListener('keydown', clickHandlerByEsc);
+    document.removeEventListener('click', onOutsideErrorMessageClick);
+  }
+
+  function clickHandlerByEsc(e) {
+    if (e.key === 'Escape') {
+      closeErrorMessage();
+    }
+  }
+
+  function onOutsideErrorMessageClick(e) {
+    const target = e.target;
+    if (!target.closest('.error__inner')) {
+      closeErrorMessage();
+    }
+  }
+}
+
+const setUserFormSubmit = (onSuccess, onFail) => {
+  form.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    const isValid = pristine.validate();
+
+    if (isValid) {
+      const formData = new FormData(evt.target);
+
+      fetch(
+        'https://26.javascript.pages.academy/kekstagram',
+        {
+          method: 'POST',
+          body: formData,
+        },
+      ).then((response) => {
+        if (response.ok) {
+          onSuccess();
+        } else {
+          onFail();
+        }
+      }
+      ).catch(() => {
+        onFail();
+      });
+
+      // blockSubmitButton();
+      // sendData(
+      //   () => {
+      //     onSuccess();
+      //     unblockSubmitButton();
+      //   },
+      //   () => {
+      //     showAlert('Не удалось отправить форму. Попробуйте ещё раз');
+      //     unblockSubmitButton();
+      //   },
+      //   new FormData(evt.target),
+      // );
+    }
+  });
+};
+
+export { setUserFormSubmit, getSuccessMessage, getErrorMessage };
